@@ -1,0 +1,8 @@
+Breakpoint 1 at 0x154: file source/main.c, line 67.
+Note: automatically using hardware breakpoints for read-only addresses.
+======================================================
+Running all tests..."
+
+"PINA: 0x01 => PORTB: 0x01, state: SWITCH"...test/tests.gdb:30: Error in sourced command file:
+No symbol "state" in current context.
+Quitting: Remote doesn't know how to detach
