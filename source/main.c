@@ -13,79 +13,95 @@
 #include "simAVRHeader.h"
 #endif
 
-enum States { START7 , INCREMENT, DECREMENT, RESET } state;
-unsigned char cnt = 0x07;
+enum States { LOCKED, PRESS_PND, RELEASE_PND, PRESS_Y, RELEASE_Y, UNLOCKED } state;
+unsigned char outputB = 0x00;
+unsigned char outputC = 0x00;
+
 #define inputA PINA
 
-void SM(state)
-{
+void SM(state){
 	switch(state) {      //TRANSITIONS
 	
-
-		case START7:
-	       		if ( inputA == 0x01 ){
-				if( cnt >= 0 && cnt < 9){
-					state = INCREMENT;
-				}
-	       		}
-			else if( inputA == 0x02 ){
-				if( cnt >= 0 && cnt < 10){
-					state = DECREMENT;
-				}
-			}
-			else if( inputA == 0x03 ){
-				state = RESET;
-			}
-			else { state = START7; }
+		case LOCKED:
+	       		if( inputA == 0x02 ){
+				state = PRESS_PND; }
+			else { state = LOCKED; }
 	       		break;
 
-	    	case INCREMENT:
-			state = START7;
+	    	case PRESS_PND:
+			if( inputA == 0x00 ){
+				state = RELEASE_PND; }
+			else { state = PRESS_PND; } 
 	       		break;
 	    
-	   	case DECREMENT:
-			state = START7;
+	   	case RELEASE_PND:
+			if( inputA == 0x01 ){
+                                state = PRESS_Y; }
+                        else { state = RELEASE__PND; }
 			break;
 
-		case RESET:
-			state = START7;
+		case PRESS_Y:
+			if( inputA == 0x00 ){
+				state = RELEASE_Y; }
+                        else { state = PRESS_Y; }
+			break;
+
+		case RELEASE_Y:
+	        	state = UNLOCKED;
+	       		break;
+
+		case UNLOCKED:
+			if( inputA = 0x80 ){
+				state = LOCKED;
+			}
+			else { state = UNLOCKED; }
 			break;
 
 		default:
-	        	state = START7;
-	       		break;	
-		}	
+			state = LOCKED;
+			break;	
+		}
+}	
 
 	switch(state) {      //ACTIONS
 	    
-	    	case START7:		
+	    	case LOCKED:
+			outputB = 0x00;
+			outputC = state;		
 			break;
-	    	case INCREMENT:
-			++cnt;
-			inputA = 0x00;
+	    	case PRESS_PND:
+			outputC = state;
 			break;
-		case DECREMENT:
-			--cnt;
-			inputA = 0x00;
+		case RELEASE_PND:
+			outputC = state;
 			break;
-		case RESET:
-			cnt = 0x00;
-			inputA = 0x00;
+		case PRESS_Y:
+			outputC = state;
+			break;
+		case RELEASE_Y:
+			outputC = state;
+			break;
+		case UNLOCKED:
+			outputC = state;
+			outputB =  0x01
 			break;
 		}
 }
 
 int main(void) {
-	DDRA = 0x00; PORTA = 0xFF; // Configure port C's 8 pins as inputs, initialize to 0s
-     	DDRC = 0xFF; PORTC = 0x00; // Configure port B's 7 most significant pins as outputs and PB0 as input
+	DDRA = 0x00; PORTA = 0xFF; // Configure port A as input
+     	DDRB = 0xFF; PORTB = 0x00; // Configure port B as input
+	DDRC = 0xFF; PORTC = 0x00; // Configure port C as output
 	
 	//enum States state = START7;
         
 	while(1){ 
-
+	//input:
+	
 	SM(state);
 	
-	PORTC = cnt;
+	PORTB = outputB;
+	PORTC = outputC;
 	}  
 
 	return 1;
