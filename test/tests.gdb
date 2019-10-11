@@ -27,27 +27,28 @@ echo ======================================================\n
 echo Running all tests..."\n\n
 
 test "PINA: 0x01 => PORTB: 0x01, state: SWITCH"
-set state = SLED_ONOF
+set state = SLED_START
 setPINA 0x01
 continue 2
-expectPORTB 0x01;
+expect state SLED_SWITCH
+expectPORTB 0x01
 checkResult
 
 
 test "PINA: 0x01, 0x00 => PORTB: 0x02, state: ONOF"
-set state = SLED_ONOF
+set state = SLED_START
 setPINA 0x01
 continue 2
-setPINA 0x00
+setPINA 0x01
 continue 2 
 expectPORTB 0x02
 checkResult
 
 test "PINA: 0x01, 0x00, 0x01 => PORTB: 0x01, state: SWITCH"
-set state = SLED_ONOF
+set state = SLED_START
 setPINA 0x01
 continue 2
-setPINA 0x00
+setPINA 0x01
 continue 2 
 setPINA 0x01
 continue 2

@@ -13,42 +13,45 @@
 #include "simAVRHeader.h"
 #endif
 
-#define inputA PINA
+enum States { SLED_START, SLED_ONOF , SLED_SWITCH } state;
 
-enum SLED_States { SLED_Start, SLED_ONOF , SLED_SWITCH } SLED_State;
-
-void SwitchLED(SLED_State)
+void SwitchLED(state)
 {
-	switch(SLED_State) {      //TRANSITIONS
-		
-	    case SLED_Start:      //initial transition
-		SLED_State = SLED_ONOF;
-		break;
+	switch(state) {      //TRANSITIONS
 	    
+	    case SLED_START:
+		state = SLED_ONOF;
+		break;
+	
 	    case SLED_ONOF:
-	       if(inputA == 0x00){		
-		SLED_State = SLED_ONOF;
+	       if(PINA == 0x00){		
+		state = SLED_ONOF;
 	       }
-	       else if(inputA == 0x01){		
-		SLED_State = SLED_SWITCH;
+	       else if(PINA == 0x01){		
+		state = SLED_SWITCH;
 	       }
 	       break;
 
 	    case SLED_SWITCH:
-	       if(inputA == 0x00){		
-		SLED_State = SLED_SWITCH;
+	       if(PINA == 0x00){		
+		state = SLED_SWITCH;
 	       }
-	       else if(inputA == 0x01){		
-		SLED_State = SLED_ONOF;
+	       else if(PINA == 0x01){		
+		state = SLED_ONOF;
 	       }
 	       break;
 	    
 	    default:
-	        SLED_State = SLED_Start;
+	        state = SLED_ONOF;
 	       break;
+	
 	}
-	switch(SLED_State) {      //ACTIONS
+
+	switch(state) {      //ACTIONS
 	    
+	    case SLED_START: 
+		break; 
+
 	    case SLED_ONOF:		
 		PORTB = 0x02;
 		break;
@@ -62,15 +65,14 @@ void SwitchLED(SLED_State)
 int main(void) {
 	DDRA = 0x00; PORTA = 0xFF; // Configure port C's 8 pins as inputs, initialize to 0s
      	DDRB = 0xFF; PORTB = 0x00; // Configure port B's 7 most significant pins as outputs and PB0 as input
-	unsigned char outputB = 0x00;
-
+	
         while (1) {
 	// inputs:
-	
-	SwitchLED(SLED_State);
+	enum States state = SLED_START;
+
+	SwitchLED(state);
 
         // outputs:
-	PORTB = outputB;
-        } 
-  return 1;
+        }  
+ return 1;
 }
