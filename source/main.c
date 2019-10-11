@@ -79,7 +79,7 @@ int main(void) {
 	DDRA = 0x00; PORTA = 0xFF; // Configure port C's 8 pins as inputs, initialize to 0s
      	DDRC = 0xFF; PORTC = 0x00; // Configure port B's 7 most significant pins as outputs and PB0 as input
 	
-	enum States state = START7;
+	//enum States state = START7;
         
 	while(1){ 
 
@@ -87,5 +87,6 @@ int main(void) {
 	
 	PORTC = cnt;
 	}  
+
 	return 1;
 }

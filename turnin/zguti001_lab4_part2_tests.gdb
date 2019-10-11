@@ -49,13 +49,6 @@ continue 1
 expectPORTC 0x09
 checkResult
 
-test "PINA: 0x02 => PORTC: 0x06, state: START7"
-set state = START7
-setPINA 0x02
-continue 1
-expectPORTC 0x06
-checkResult
-
 test "PINA: 0x01, 0x00 => PORTC: 0x00, state: START7"
 set state = START7
 setPINA 0x01
@@ -67,16 +60,17 @@ continue 1
 expectPORTC 0x00
 checkResult
 
-test "PINA: 0x01, 0x02 => PORTC: 0x07, state: START7"
+test "PINA: 0x01, 0x00, 0x03 => PORTC: 0x00, state: START7"
 set state = START7
 setPINA 0x01
 continue 1
-setPINA 0x02
-continue 1
 setPINA 0x00
 continue 1
-expectPORTC 0x07
+setPINA 0x03
+continue 1
+expectPORTC 0x00
 checkResult
+
 
 
 # Report on how many tests passed/tests ran
