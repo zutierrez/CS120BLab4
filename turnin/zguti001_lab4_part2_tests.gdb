@@ -26,7 +26,7 @@
 echo ======================================================\n
 echo Running all tests..."\n\n
 
-#********TESTS FOR SWITCHING LED BUTTON EXERCISE********
+#********TESTS FOR INCREMENTER & DECREMENTER********
 
 test "PINA: 0x01 => PORTC: 0x08, state: START7"
 set state = START7
